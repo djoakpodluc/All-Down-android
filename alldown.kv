@@ -1,0 +1,200 @@
+#:kivy 2.2
+
+<QueueRow@BoxLayout>:
+    orientation: "vertical"
+    size_hint_y: None
+    height: self.minimum_height
+    padding: 10, 8
+    spacing: 2
+    canvas.before:
+        Color:
+            rgba: 0.09, 0.09, 0.14, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<QueueTitleLabel@Label>:
+    size_hint_y: None
+    height: 22
+    halign: "left"
+    valign: "middle"
+    text_size: self.width, None
+    color: 0.9, 0.9, 0.92, 1
+    font_size: "14sp"
+    bold: True
+
+<QueueSubLabel@Label>:
+    size_hint_y: None
+    height: 20
+    halign: "left"
+    valign: "middle"
+    text_size: self.width, None
+    color: 0.6, 0.65, 0.7, 1
+    font_size: "12sp"
+
+<HistoryRow@BoxLayout>:
+    orientation: "vertical"
+    size_hint_y: None
+    height: self.minimum_height
+    padding: 10, 6
+    canvas.before:
+        Color:
+            rgba: 0.08, 0.08, 0.12, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<RootWidget>:
+    orientation: "vertical"
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.03, 0.05, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        size_hint_y: None
+        height: 64
+        padding: 16, 10
+        Label:
+            text: "🎬 AllDown"
+            font_size: "22sp"
+            bold: True
+            halign: "left"
+            valign: "middle"
+            text_size: self.size
+        Label:
+            text: "Téléchargez. Convertissez. Profitez."
+            font_size: "12sp"
+            italic: True
+            color: 0.6, 0.6, 0.65, 1
+            halign: "right"
+            valign: "middle"
+            text_size: self.size
+
+    TabbedPanel:
+        id: tabs
+        do_default_tab: False
+        tab_width: self.width / 3
+
+        TabbedPanelItem:
+            text: "Télécharger"
+            BoxLayout:
+                orientation: "vertical"
+                padding: 12
+                spacing: 8
+
+                Label:
+                    text: "Lien(s) à télécharger (YouTube, TikTok, Facebook, Instagram, X, Vimeo...)"
+                    size_hint_y: None
+                    height: 40
+                    halign: "left"
+                    valign: "middle"
+                    text_size: self.width, None
+                    color: 0.8, 0.8, 0.85, 1
+                    font_size: "13sp"
+
+                TextInput:
+                    id: url_input
+                    hint_text: "Collez ici un ou plusieurs liens (un par ligne)…"
+                    size_hint_y: None
+                    height: 90
+                    multiline: True
+                    background_color: 0.07, 0.07, 0.11, 1
+                    foreground_color: 0.9, 0.9, 0.92, 1
+                    hint_text_color: 0.5, 0.5, 0.55, 1
+                    cursor_color: 0.3, 0.6, 1, 1
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: 44
+                    spacing: 8
+                    Button:
+                        text: "📋 Coller"
+                        background_normal: ""
+                        background_color: 0.2, 0.45, 0.8, 1
+                        on_release: root.paste_url()
+                    Button:
+                        text: "🗑️ Effacer"
+                        background_normal: ""
+                        background_color: 0.25, 0.25, 0.28, 1
+                        on_release: root.clear_url()
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: 44
+                    spacing: 8
+                    Spinner:
+                        id: type_spinner
+                        text: "Vidéo"
+                        values: ["Vidéo", "Audio"]
+                        background_normal: ""
+                        background_color: 0.18, 0.18, 0.22, 1
+                        on_text: root.on_type_change()
+                    Spinner:
+                        id: quality_spinner
+                        text: "720p"
+                        values: ["Meilleure", "1080p", "720p", "480p", "360p"]
+                        background_normal: ""
+                        background_color: 0.18, 0.18, 0.22, 1
+
+                Button:
+                    text: "▶  Télécharger"
+                    size_hint_y: None
+                    height: 48
+                    background_normal: ""
+                    background_color: 0.15, 0.55, 0.95, 1
+                    bold: True
+                    on_release: root.start_download()
+
+                Label:
+                    id: status_label
+                    text: "Prêt"
+                    size_hint_y: None
+                    height: 26
+                    color: 0.6, 0.75, 1, 1
+                    font_size: "12sp"
+
+                ScrollView:
+                    GridLayout:
+                        id: queue_list
+                        cols: 1
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: 4
+
+        TabbedPanelItem:
+            text: "Historique"
+            BoxLayout:
+                orientation: "vertical"
+                padding: 12
+                spacing: 8
+                Button:
+                    text: "🗑️ Vider l'historique"
+                    size_hint_y: None
+                    height: 42
+                    background_normal: ""
+                    background_color: 0.6, 0.2, 0.2, 1
+                    on_release: root.clear_history()
+                ScrollView:
+                    GridLayout:
+                        id: history_list
+                        cols: 1
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: 4
+
+        TabbedPanelItem:
+            text: "Paramètres"
+            BoxLayout:
+                orientation: "vertical"
+                padding: 16
+                spacing: 10
+                Label:
+                    id: settings_label
+                    text: "Chargement…"
+                    halign: "left"
+                    valign: "top"
+                    text_size: self.width, None
+                    color: 0.8, 0.8, 0.85, 1
